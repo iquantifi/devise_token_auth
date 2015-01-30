@@ -38,7 +38,7 @@ module DeviseTokenAuth::Concerns::User
     def email_changed?
       false
     end
-
+  end
 
   def valid_token?(token, client_id='default')
     client_id ||= 'default'
