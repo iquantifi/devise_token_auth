@@ -40,46 +40,6 @@ module DeviseTokenAuth::Concerns::User
     end
 
 
-    # override devise method to include additional info as opts hash
-    def send_confirmation_instructions(opts=nil)
-      unless @raw_confirmation_token
-        generate_confirmation_token!
-      end
-
-      opts ||= {}
-
-      # fall back to "default" config name
-      opts[:client_config] ||= "default"
-
-      if pending_reconfirmation?
-        opts[:to] = unconfirmed_email
-      end
-
-      send_devise_notification(:confirmation_instructions, @raw_confirmation_token, opts)
-    end
-
-    # override devise method to include additional info as opts hash
-    def send_reset_password_instructions(opts=nil)
-      token = set_reset_password_token
-
-      opts ||= {}
-
-      # fall back to "default" config name
-      opts[:client_config] ||= "default"
-
-      if pending_reconfirmation?
-        opts[:to] = unconfirmed_email
-      else
-        opts[:to] = email
-      end
-
-      send_devise_notification(:reset_password_instructions, token, opts)
-
-      token
-    end
-  end
-
-
   def valid_token?(token, client_id='default')
     client_id ||= 'default'
 
@@ -90,13 +50,6 @@ module DeviseTokenAuth::Concerns::User
 
     # return false if none of the above conditions are met
     return false
-  end
-
-
-  # this must be done from the controller so that additional params
-  # can be passed on from the client
-  def send_confirmation_notification?
-    false
   end
 
 
